@@ -5,5 +5,13 @@
 
 # Install / load packages -------------------------------------------------
 
-install.packages("remotes")
-remotes::install_github("VEZY/XploRer")
+# install.packages("remotes")
+# remotes::install_github("VEZY/XploRer")
+library(XploRer)
+
+
+# import mtg --------------------------------------------------------------
+
+
+
+MTG = read_mtg("1-reconstruction/1-automatic/A1B1.mtg")
