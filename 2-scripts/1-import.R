@@ -8,10 +8,25 @@
 # install.packages("remotes")
 # remotes::install_github("VEZY/XploRer")
 library(XploRer)
-
+library(ggplot2)
 
 # import mtg --------------------------------------------------------------
 
+MTG_auto = read_mtg("1-reconstruction/1-automatic/A1B2.mtg")
+MTG_corr = read_mtg("1-reconstruction/2-auto_and_manual/A1B2.mtg")
+
+autoplot(MTG_corr)
+
+MTG$attributesAll
+# "XX" "YY" "ZZ"
+
+MTG$.scales
+MTG$.symbols
+
+mutate_mtg(MTG, length = sqrt((node$XX - parent(node$XX))^2 + 
+                                (node$YY - parent(node$YY))^2 +
+                                (node$ZZ - parent(node$ZZ))^2), 
+           .symbol = "N")
 
 
-MTG = read_mtg("1-reconstruction/1-automatic/A1B1.mtg")
+print(MTG, "length")
