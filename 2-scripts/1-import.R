@@ -9,38 +9,31 @@
 # remotes::install_github("VEZY/XploRer")
 library(XploRer)
 library(ggplot2)
+source("2-scripts/0-functions.R")
 
 # import mtg --------------------------------------------------------------
 
-MTG_auto = read_mtg("1-reconstruction/1-automatic/A1B2.mtg")
-MTG_corr = read_mtg("1-reconstruction/2-auto_and_manual/A1B2.mtg")
+mtg_files = list.files("1-reconstruction/1-automatic", full.names = TRUE)
 
+length_diff = 
+  lapply(mtg_files, function(x){
+    corr_branch_diff(file_auto = x, 
+                     file_corr = file.path("1-reconstruction/2-auto_and_manual",
+                                           basename(x)))
+  })
+
+names(length_diff) = gsub(".mtg","", basename(mtg_files))
+
+length_diff$A1B1$relative
+length_diff$A1B2$relative
+
+# Compute relative error mean and sd:
+relative_error = c(length_diff$A1B1$relative,2,3,4)
+mean()
+sd()
+
+# Interpret boxplot:
+boxplot(relative_error)
+
+# Identify corrections in links between nodes in branches:
 autoplot(MTG_corr)
-
-MTG_auto$attributesAll
-# "XX" "YY" "ZZ"
-
-MTG_auto$.scales
-MTG_auto$.symbol
-
-mutate_mtg(MTG_auto, length = sqrt((node$XX - parent(node$XX))^2 + 
-                                     (node$YY - parent(node$YY))^2 +
-                                     (node$ZZ - parent(node$ZZ))^2), 
-           .symbol = "N")
-MTG_auto$node_2$length = 0.0
-mutate_mtg(MTG_corr, length = sqrt((node$XX - parent(node$XX))^2 + 
-                                     (node$YY - parent(node$YY))^2 +
-                                     (node$ZZ - parent(node$ZZ))^2), 
-           .symbol = "N")
-MTG_corr$node_2$length = 0.0
-MTG_corr_df = data.tree::ToDataFrameNetwork(MTG_corr,"length")
-MTG_auto_df = data.tree::ToDataFrameNetwork(MTG_auto,"length")
-
-
-
-sum(MTG_auto_df$length)-sum(MTG_corr_df$length)
-sum(MTG_auto_df$length)/sum(MTG_corr_df$length)
-
-
-    
-MTG_auto_df[is.na(MTG_auto_df$length),]
