@@ -21,12 +21,26 @@ MTG_auto$attributesAll
 # "XX" "YY" "ZZ"
 
 MTG_auto$.scales
-MTG_auto$.symbols
+MTG_auto$.symbol
 
 mutate_mtg(MTG_auto, length = sqrt((node$XX - parent(node$XX))^2 + 
                                      (node$YY - parent(node$YY))^2 +
                                      (node$ZZ - parent(node$ZZ))^2), 
            .symbol = "N")
+MTG_auto$node_2$length = 0.0
+mutate_mtg(MTG_corr, length = sqrt((node$XX - parent(node$XX))^2 + 
+                                     (node$YY - parent(node$YY))^2 +
+                                     (node$ZZ - parent(node$ZZ))^2), 
+           .symbol = "N")
+MTG_corr$node_2$length = 0.0
+MTG_corr_df = data.tree::ToDataFrameNetwork(MTG_corr,"length")
+MTG_auto_df = data.tree::ToDataFrameNetwork(MTG_auto,"length")
 
 
-print(MTG, "length")
+
+sum(MTG_auto_df$length)-sum(MTG_corr_df$length)
+sum(MTG_auto_df$length)/sum(MTG_corr_df$length)
+
+
+    
+MTG_auto_df[is.na(MTG_auto_df$length),]
