@@ -3,14 +3,13 @@
 #' 
 #' Compute the relative and absolute error between two branches 
 #'
-#' @param filepath  File path to write the output data.frame
 #' @param file_auto Automatic reconstructed branch
 #' @param file_corr Automatic + corrected branch 
 #' @param wood_density Wood density used to compute the biomass (default to 0.5)
 #'
 #' @return A list withe the relative (%) and absolute (m) difference between branches length
 #' @export
-corr_branch_diff = function(filepath,file_auto,file_corr,wood_density = 0.5){
+corr_branch_diff = function(file_auto,file_corr,wood_density = 0.5){
   MTG_auto = read_mtg(file_auto)
   MTG_corr = read_mtg(file_corr)
   
@@ -40,8 +39,8 @@ corr_branch_diff = function(filepath,file_auto,file_corr,wood_density = 0.5){
   MTG_corr$node_2$volume = 0.0
   
   # Transform to data.frame:
-  MTG_corr_df = data.tree::ToDataFrameNetwork(MTG_corr,"length","volume")
-  MTG_auto_df = data.tree::ToDataFrameNetwork(MTG_auto,"length","volume")
+  MTG_corr_df = data.tree::ToDataFrameNetwork(MTG_corr,"length","volume","radius")
+  MTG_auto_df = data.tree::ToDataFrameNetwork(MTG_auto,"length","volume","radius")
   
   # Biomass in kg
   MTG_corr_df$biomass = MTG_corr_df$volume*wood_density*1000
@@ -49,8 +48,5 @@ corr_branch_diff = function(filepath,file_auto,file_corr,wood_density = 0.5){
   
   dplyr::bind_rows(corrected = MTG_corr_df, 
                    automatic = MTG_auto_df,
-                   .id = "reconstruction")%>%
-    data.table::fwrite(x = ., file = filepath)
-  
-  list(df_auto = MTG_auto_df, df_corr = MTG_corr_df)
+                   .id = "reconstruction")
 }
